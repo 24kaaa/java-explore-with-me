@@ -2,18 +2,16 @@ FROM maven:3.9.6-eclipse-temurin-21 as builder
 
 WORKDIR /workspace
 
-# 1. Копируем только нужные POM-файлы
+# 1. Копируем всю структуру проекта
 COPY . .
 
-# 2. Скачиваем зависимости
-RUN mvn dependency:go-offline -B
+# 2. Устанавливаем родительский POM и все модули в локальный репозиторий
+RUN mvn install -N -DskipTests && \
+    mvn -f stats/pom.xml install -N -DskipTests && \
+    mvn -f stats/stats-dto/pom.xml install -DskipTests
 
-# 3. Копируем исходный код
-COPY stats/stats-server/src ./stats/stats-server/src/
-COPY stats/stats-dto/src ./stats/stats-dto/src/
-
-# 4. Собираем только stats-server
-RUN mvn clean package -pl stats/stats-server -am -DskipTests
+# 3. Собираем stats-server
+RUN mvn -f stats/stats-server/pom.xml clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
