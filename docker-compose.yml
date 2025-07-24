@@ -23,6 +23,7 @@ services:
         dockerfile: stats/stats-server/Dockerfile
       ports:
         - "9090:9090"
+        - "9091:9090"  # Дублирующий порт для healthcheck (без /stats)
       environment:
         SPRING_DATASOURCE_URL: jdbc:postgresql://stats-db:5432/stats_db
         SPRING_DATASOURCE_USERNAME: stats_user
