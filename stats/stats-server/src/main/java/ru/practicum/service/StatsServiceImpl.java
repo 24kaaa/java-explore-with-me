@@ -25,10 +25,6 @@ public class StatsServiceImpl implements StatsService {
             throw new IllegalArgumentException("Start date must be before end date");
         }
 
-        if (unique) {
-            return statsRepository.getUniqueStats(start, end, uris);
-        } else {
-            return statsRepository.getStats(start, end, uris);
-        }
+        return statsRepository.getStats(start, end, uris != null ? uris : null, Boolean.TRUE.equals(unique));
     }
 }
