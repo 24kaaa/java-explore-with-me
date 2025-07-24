@@ -11,11 +11,10 @@ services:
     volumes:
       - stats-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:9090/stats/actuator/health || exit 1" ]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U stats_user -d stats_db"]
+      interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 30s
+      retries: 5
 
 
   stats-server:
@@ -31,6 +30,12 @@ services:
       depends_on:
         stats-db:
           condition: service_healthy
+      healthcheck:
+        test: [ "CMD-SHELL", "curl -f http://localhost:9090/stats/actuator/health || exit 1" ]
+        interval: 10s
+        timeout: 5s
+        retries: 10
+        start_period: 30s
 
 volumes:
   stats-db-data:
