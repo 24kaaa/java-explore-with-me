@@ -10,11 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - stats-db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U stats_user -d stats_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+
 
 
   stats-server:
