@@ -23,7 +23,6 @@ services:
         dockerfile: stats/stats-server/Dockerfile
       ports:
         - "9090:9090"
-        - "9091:9090"  # Дублирующий порт для healthcheck (без /stats)
       environment:
         SPRING_DATASOURCE_URL: jdbc:postgresql://stats-db:5432/stats_db
         SPRING_DATASOURCE_USERNAME: stats_user
@@ -31,12 +30,6 @@ services:
       depends_on:
         stats-db:
           condition: service_healthy
-      healthcheck:
-        test: [ "CMD-SHELL", "curl -f http://localhost:9090/actuator/health || exit 1" ]
-        interval: 10s
-        timeout: 5s
-        retries: 10
-        start_period: 30s
 
 volumes:
   stats-db-data:
