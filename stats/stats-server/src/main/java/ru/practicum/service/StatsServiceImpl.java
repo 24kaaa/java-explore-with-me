@@ -2,6 +2,7 @@ package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.repository.StatsRepository;
 import ru.practicum.dto.EndpointHit;
 import ru.practicum.dto.ViewStats;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StatsServiceImpl implements StatsService {
     private final StatsRepository statsRepository;
-
+    @Transactional
     @Override
     public void saveHit(EndpointHit hit) {
         statsRepository.save(hit);
