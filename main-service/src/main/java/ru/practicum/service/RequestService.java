@@ -40,60 +40,36 @@ public class RequestService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
 
-        // Проверка, что пользователь не является инициатором события
-        if (event.getInitiator().getId().equals(userId)) {
-            throw new ConflictException("Initiator cannot participate in his own event");
-        }
-
-        // Проверка, что событие опубликовано
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new ConflictException("Cannot participate in unpublished event");
         }
 
-        // Проверка на дублирование запроса
+        if (event.getInitiator().getId().equals(userId)) {
+            throw new ConflictException("Initiator cannot participate in his own event");
+        }
+
         if (requestRepository.existsByEventIdAndRequesterId(eventId, userId)) {
             throw new ConflictException("Request already exists");
         }
 
-        // Проверка лимита участников
-        if (event.getParticipantLimit() > 0 &&
-                event.getParticipantLimit() <= requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED)) {
-            throw new ConflictException("Participant limit reached");
-        }
-
-        if (event.getParticipantLimit() != 0) {
-            long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-            if (confirmedRequests >= event.getParticipantLimit()) {
-                throw new ConflictException("The participant limit has been reached");
-            }
-        }
-
-        if (requestRepository.existsByEventIdAndRequesterId(eventId, userId)) {
-            throw new ConflictException("Request already exists for this user and event");
-        }
-
-        if (event.getInitiator().getId().equals(userId)) {
-            throw new ConflictException("Initiator cannot add request to own event");
-        }
-
-        if (event.getParticipantLimit() > 0 &&
-                event.getParticipantLimit() <= requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED)) {
+        long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+        if (event.getParticipantLimit() > 0 && confirmedRequests >= event.getParticipantLimit()) {
             throw new ConflictException("Participant limit reached");
         }
 
         ParticipationRequest request = new ParticipationRequest();
-        request.setCreated(LocalDateTime.now());
-        request.setEvent(event);
         request.setRequester(user);
+        request.setEvent(event);
+        request.setCreated(LocalDateTime.now());
 
-        // Если премодерация отключена, автоматически подтверждаем запрос
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             request.setStatus(RequestStatus.CONFIRMED);
         } else {
             request.setStatus(RequestStatus.PENDING);
         }
 
-        return requestMapper.toParticipationRequestDto(requestRepository.save(request));
+        ParticipationRequest savedRequest = requestRepository.save(request);
+        return requestMapper.toParticipationRequestDto(savedRequest);
     }
 
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {

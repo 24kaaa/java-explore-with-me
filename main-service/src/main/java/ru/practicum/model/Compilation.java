@@ -2,6 +2,8 @@ package ru.practicum.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -10,6 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,14 +20,14 @@ public class Compilation {
 
     @ManyToMany
     @JoinTable(
-            name = "compilation_events",
+            name = "compilation_event",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private Set<Event> events;
+    private Set<Event> events = new HashSet<>();
 
     @Column(nullable = false)
-    private Boolean pinned;
+    private Boolean pinned = false;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String title;
 }

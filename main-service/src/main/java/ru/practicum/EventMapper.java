@@ -3,6 +3,7 @@ package ru.practicum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.*;
 import ru.practicum.model.Event;
 import ru.practicum.model.RequestStatus;
@@ -10,7 +11,6 @@ import ru.practicum.repository.ParticipationRequestRepository;
 import ru.practicum.statsclient.StatsClient;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,7 +33,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .category(categoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(calculateConfirmedRequests(event))
-                .eventDate(event.getEventDate())  // Jackson сам сериализует в строку
+                .eventDate(event.getEventDate())
                 .initiator(userMapper.toUserShortDto(event.getInitiator()))
                 .paid(event.getPaid())
                 .title(event.getTitle())
@@ -55,7 +55,7 @@ public class EventMapper {
                 .category(categoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(calculateConfirmedRequests(event))
                 .description(event.getDescription())
-                .eventDate(event.getEventDate())  // Jackson сам сериализует
+                .eventDate(event.getEventDate())
                 .initiator(userMapper.toUserShortDto(event.getInitiator()))
                 .location(locationDto)
                 .paid(event.getPaid())
@@ -66,16 +66,17 @@ public class EventMapper {
                 .views(calculateViews(event));
 
         if (event.getCreatedOn() != null) {
-            builder.createdOn(event.getCreatedOn());  // Jackson сам сериализует
+            builder.createdOn(event.getCreatedOn());
         }
 
         if (event.getPublishedOn() != null) {
-            builder.publishedOn(event.getPublishedOn());  // Jackson сам сериализует
+            builder.publishedOn(event.getPublishedOn());
         }
 
         return builder.build();
     }
 
+    @Transactional(readOnly = true)
     private Long calculateConfirmedRequests(Event event) {
         try {
             return requestRepository.countByEventIdAndStatus(
@@ -109,7 +110,7 @@ public class EventMapper {
         return Event.builder()
                 .annotation(dto.getAnnotation())
                 .description(dto.getDescription())
-                .eventDate(dto.getEventDate())  // Предполагается, что dto.getEventDate() возвращает LocalDateTime
+                .eventDate(dto.getEventDate())
                 .paid(dto.getPaid() != null ? dto.getPaid() : false)
                 .participantLimit(dto.getParticipantLimit() != null ? dto.getParticipantLimit() : 0)
                 .requestModeration(dto.getRequestModeration() != null ? dto.getRequestModeration() : true)

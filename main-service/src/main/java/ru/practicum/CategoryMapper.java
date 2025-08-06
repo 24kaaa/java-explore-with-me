@@ -6,8 +6,6 @@ import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.NewCategoryDto;
 import ru.practicum.model.Category;
 
-import java.util.Objects;
-
 @Component
 @Slf4j
 public class CategoryMapper {

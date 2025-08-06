@@ -1,5 +1,6 @@
 package ru.practicum.statsclient;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
@@ -9,12 +10,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.dto.EndpointHit;
 import ru.practicum.dto.ViewStats;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
+@Slf4j
 public class StatsClientImpl implements StatsClient {
     private final RestTemplate restTemplate;
     private final String serverUrl;
@@ -35,21 +38,18 @@ public class StatsClientImpl implements StatsClient {
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end,
                                     List<String> uris, boolean unique) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(serverUrl + "/stats")
-                .queryParam("start", encodeDateTime(start))
-                .queryParam("end", encodeDateTime(end))
+                .queryParam("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .queryParam("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .queryParam("unique", unique);
 
         if (uris != null && !uris.isEmpty()) {
             builder.queryParam("uris", String.join(",", uris));
         }
 
-        ResponseEntity<ViewStats[]> response = restTemplate.getForEntity(
-                builder.toUriString(), ViewStats[].class);
+        URI uri = builder.build().toUri();
 
+        log.info("Requesting stats from: {}", uri.toString());
+        ResponseEntity<ViewStats[]> response = restTemplate.getForEntity(uri, ViewStats[].class);
         return Arrays.asList(response.getBody());
-    }
-
-    private String encodeDateTime(LocalDateTime dateTime) {
-        return dateTime.format(formatter);
     }
 }

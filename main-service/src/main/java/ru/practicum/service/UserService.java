@@ -14,7 +14,7 @@ import ru.practicum.model.User;
 import ru.practicum.repository.UserRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -53,14 +53,10 @@ public class UserService {
                     .getContent();
         }
 
-        // Предполагаем, что в UserRepository есть метод с пагинацией:
-        // Page<User> findAllByIdIn(List<Long> ids, Pageable pageable);
-
         return userRepository.findAllByIdIn(ids, pageable)
                 .map(userMapper::toUserDto)
                 .getContent();
     }
-
 
 
     public void deleteUser(Long userId) {

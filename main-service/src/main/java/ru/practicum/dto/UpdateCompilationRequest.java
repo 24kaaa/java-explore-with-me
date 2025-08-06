@@ -6,14 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class UpdateCompilationRequest {
-    private Set<Long> events;
+    private List<Long> events;
 
     private Boolean pinned;
 

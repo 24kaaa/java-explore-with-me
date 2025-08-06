@@ -18,5 +18,5 @@ public class EventRequestStatusUpdateRequest {
     private List<Long> requestIds;
 
     @NotBlank
-    private String status; // CONFIRMED, REJECTED
+    private String status;
 }

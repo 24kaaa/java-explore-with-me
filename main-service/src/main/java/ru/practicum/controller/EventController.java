@@ -10,6 +10,7 @@ import ru.practicum.dto.UpdateEventAdminRequest;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.service.EventService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,8 +24,8 @@ public class EventController {
             @RequestParam(required = false) List<Long> users,
             @RequestParam(required = false) List<String> states,
             @RequestParam(required = false) List<Long> categories,
-            @RequestParam(required = false, name = "rangeStart") String start,
-            @RequestParam(required = false, name = "rangeEnd") String end,
+            @RequestParam(required = false, name = "rangeStart") LocalDateTime start,
+            @RequestParam(required = false, name = "rangeEnd") LocalDateTime end,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size) {
         return ResponseEntity.ok(eventService.searchEvents(users, states, categories, start, end, from, size));

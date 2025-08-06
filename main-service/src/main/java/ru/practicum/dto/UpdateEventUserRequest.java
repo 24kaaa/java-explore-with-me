@@ -34,7 +34,7 @@ public class UpdateEventUserRequest {
 
     private Boolean requestModeration;
 
-    private String stateAction; // SEND_TO_REVIEW, CANCEL_REVIEW
+    private String stateAction;
 
     @Size(min = 3, max = 120)
     private String title;

@@ -18,12 +18,15 @@ public class DateFormatConfig {
 
         return builder -> {
 
+            // formatter
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+            // deserializers
             builder.deserializers(new LocalDateDeserializer(dateFormatter));
             builder.deserializers(new LocalDateTimeDeserializer(dateTimeFormatter));
 
+            // serializers
             builder.serializers(new LocalDateSerializer(dateFormatter));
             builder.serializers(new LocalDateTimeSerializer(dateTimeFormatter));
         };

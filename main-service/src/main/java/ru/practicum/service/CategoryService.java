@@ -2,10 +2,7 @@ package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import ru.practicum.CategoryMapper;
@@ -18,10 +15,8 @@ import ru.practicum.model.Category;
 import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,10 +67,6 @@ public class CategoryService {
         return categoryMapper.toCategoryDto(categoryRepository.save(category));
     }
 
-    // В CategoryService.java добавляем новые методы:
-
-
-
     public List<CategoryDto> getCategories(int from, int size) {
         PageRequest page = PageRequest.of(from / size, size);
         return categoryRepository.findAll(page)
@@ -83,7 +74,6 @@ public class CategoryService {
                 .map(categoryMapper::toCategoryDto)
                 .collect(Collectors.toList());
     }
-
 
     public CategoryDto getCategory(Long catId) {
         Category category = categoryRepository.findById(catId)

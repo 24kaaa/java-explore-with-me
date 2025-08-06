@@ -8,7 +8,6 @@ import ru.practicum.dto.LocationDto;
 import ru.practicum.model.Location;
 import ru.practicum.repository.LocationRepository;
 
-import java.util.Objects;
 
 @Transactional
 @Service
@@ -20,7 +19,17 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional(readOnly = true)
     public Location getOrSave(LocationDto dto) {
+        if (dto == null) {
+            return null;
+        }
+
         Location location = repository.findByLatAndLon(dto.getLat(), dto.getLon());
-        return Objects.requireNonNullElseGet(location, () -> repository.save(mapper.locationDtoToModel(dto)));
+
+        if (location == null) {
+            location = mapper.locationDtoToModel(dto);
+            repository.save(location);
+        }
+
+        return location;
     }
 }

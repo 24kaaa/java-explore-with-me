@@ -1,9 +1,7 @@
 package ru.practicum.dto;
 
-
 import jakarta.validation.constraints.*;
 import lombok.*;
-import ru.practicum.model.Location;
 
 import java.time.LocalDateTime;
 

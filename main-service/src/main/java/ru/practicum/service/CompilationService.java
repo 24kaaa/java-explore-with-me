@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.CompilationMapper;
+import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.NewCompilationDto;
@@ -28,16 +29,30 @@ public class CompilationService {
     private final CompilationMapper compilationMapper;
 
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
-        Compilation compilation = new Compilation();
-        compilation.setTitle(newCompilationDto.getTitle());
-        compilation.setPinned(newCompilationDto.getPinned() != null ? newCompilationDto.getPinned() : false);
+
+        if (newCompilationDto.getTitle() == null || newCompilationDto.getTitle().isBlank()) {
+            throw new BadRequestException("Title cannot be empty");
+        }
+
+        Compilation compilation = Compilation.builder()
+                .title(newCompilationDto.getTitle())
+                .pinned(newCompilationDto.getPinned() != null ? newCompilationDto.getPinned() : false)
+                .build();
 
         if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
             Set<Event> events = new HashSet<>(eventRepository.findAllById(newCompilationDto.getEvents()));
+            if (events.size() != newCompilationDto.getEvents().size()) {
+                Set<Long> foundIds = events.stream().map(Event::getId).collect(Collectors.toSet());
+                Set<Long> missingIds = newCompilationDto.getEvents().stream()
+                        .filter(id -> !foundIds.contains(id))
+                        .collect(Collectors.toSet());
+                throw new NotFoundException("Events not found with ids: " + missingIds);
+            }
             compilation.setEvents(events);
         }
 
-        return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
+        Compilation saved = compilationRepository.save(compilation);
+        return compilationMapper.toCompilationDto(saved);
     }
 
     public void deleteCompilation(Long compId) {
@@ -47,26 +62,39 @@ public class CompilationService {
         compilationRepository.deleteById(compId);
     }
 
-    public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest) {
+
+    public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest request) {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));
 
-        if (updateCompilationRequest.getTitle() != null) {
-            compilation.setTitle(updateCompilationRequest.getTitle());
+        if (request.getTitle() != null) {
+            compilation.setTitle(request.getTitle());
         }
 
-        if (updateCompilationRequest.getPinned() != null) {
-            compilation.setPinned(updateCompilationRequest.getPinned());
+        if (request.getPinned() != null) {
+            compilation.setPinned(request.getPinned());
         }
 
-        if (updateCompilationRequest.getEvents() != null) {
-            Set<Event> events = new HashSet<>(eventRepository.findAllById(updateCompilationRequest.getEvents()));
-            compilation.setEvents(events);
+        if (request.getEvents() != null) {
+            Set<Event> events = new HashSet<>(eventRepository.findAllById(request.getEvents()));
+
+            if (events.size() != request.getEvents().size()) {
+                Set<Long> foundIds = events.stream().map(Event::getId).collect(Collectors.toSet());
+                Set<Long> missingIds = request.getEvents().stream()
+                        .filter(id -> !foundIds.contains(id))
+                        .collect(Collectors.toSet());
+                throw new NotFoundException("Events not found with ids: " + missingIds);
+            }
+
+            compilation.getEvents().clear();
+            compilation.getEvents().addAll(events);
         }
 
-        return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
+        Compilation updated = compilationRepository.save(compilation);
+        return compilationMapper.toCompilationDto(updated);
     }
 
+    @Transactional(readOnly = true)
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
 
@@ -81,6 +109,7 @@ public class CompilationService {
         }
     }
 
+    @Transactional(readOnly = true)
     public CompilationDto getCompilation(Long compId) {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));

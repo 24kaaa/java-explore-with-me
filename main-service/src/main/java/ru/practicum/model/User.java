@@ -3,8 +3,6 @@ package ru.practicum.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-
-
 @Entity
 @Table(name = "users")
 @Data
