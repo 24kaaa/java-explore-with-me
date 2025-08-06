@@ -3,7 +3,7 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.LocationMapper;
+import ru.practicum.mapper.LocationMapper;
 import ru.practicum.dto.LocationDto;
 import ru.practicum.model.Location;
 import ru.practicum.repository.LocationRepository;

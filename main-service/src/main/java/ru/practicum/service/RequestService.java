@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.RequestMapper;
+import ru.practicum.mapper.RequestMapper;
 import ru.practicum.dto.ParticipationRequestDto;
 import ru.practicum.model.*;
 import ru.practicum.repository.EventRepository;

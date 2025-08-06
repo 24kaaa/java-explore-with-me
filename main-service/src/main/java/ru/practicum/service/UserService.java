@@ -7,7 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.UserMapper;
+import ru.practicum.mapper.UserMapper;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
 import ru.practicum.model.User;

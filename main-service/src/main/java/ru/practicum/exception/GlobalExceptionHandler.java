@@ -49,6 +49,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now().format(TIMESTAMP_FORMATTER)
         );
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {

@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.practicum.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

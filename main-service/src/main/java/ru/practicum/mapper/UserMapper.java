@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.practicum.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.dto.NewUserRequest;
@@ -22,6 +22,7 @@ public class UserMapper {
                 .email(user.getEmail())
                 .build();
     }
+
     public UserShortDto toUserShortDto(User user) {
         return UserShortDto.builder()
                 .id(user.getId())

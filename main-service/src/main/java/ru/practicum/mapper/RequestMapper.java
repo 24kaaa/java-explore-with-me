@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.practicum.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.dto.ParticipationRequestDto;
