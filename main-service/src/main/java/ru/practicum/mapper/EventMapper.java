@@ -3,17 +3,11 @@ package ru.practicum.mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.*;
 import ru.practicum.model.Event;
-import ru.practicum.model.RequestStatus;
-import ru.practicum.repository.ParticipationRequestRepository;
-import ru.practicum.service.EventService;
 import ru.practicum.service.EventStatisticsService;
-import ru.practicum.statsclient.StatsClient;
 
-import java.time.LocalDateTime;
-import java.util.List;
+
 import java.util.Objects;
 
 @Component
