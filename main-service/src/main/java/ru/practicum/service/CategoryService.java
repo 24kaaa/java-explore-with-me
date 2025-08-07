@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.mapper.CategoryMapper;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictException;
@@ -27,6 +28,7 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
     private final EventRepository eventRepository;
 
+    @Transactional
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
 
         if (newCategoryDto.getName() != null && newCategoryDto.getName().trim().isEmpty()) {
@@ -41,6 +43,7 @@ public class CategoryService {
         return categoryMapper.toCategoryDto(categoryRepository.save(category));
     }
 
+    @Transactional
     public void deleteCategory(Long catId) {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Category not found"));
@@ -52,6 +55,7 @@ public class CategoryService {
         categoryRepository.deleteById(catId);
     }
 
+    @Transactional
     public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
         if (categoryDto.getName() != null && categoryDto.getName().length() > 50) {
             throw new BadRequestException("Category name length must be between 1 and 50 characters");
@@ -67,6 +71,7 @@ public class CategoryService {
         return categoryMapper.toCategoryDto(categoryRepository.save(category));
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryDto> getCategories(int from, int size) {
         PageRequest page = PageRequest.of(from / size, size);
         return categoryRepository.findAll(page)
@@ -75,6 +80,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public CategoryDto getCategory(Long catId) {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Category not found"));

@@ -1,9 +1,7 @@
 package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.service.CategoryService;
@@ -11,11 +9,9 @@ import ru.practicum.service.CategoryService;
 import java.util.List;
 
 
-@Validated
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@Slf4j
 public class PublicCategoryController {
     private final CategoryService categoryService;
 

@@ -28,6 +28,7 @@ public class CompilationService {
     private final EventRepository eventRepository;
     private final CompilationMapper compilationMapper;
 
+    @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
 
         if (newCompilationDto.getTitle() == null || newCompilationDto.getTitle().isBlank()) {
@@ -55,6 +56,7 @@ public class CompilationService {
         return compilationMapper.toCompilationDto(saved);
     }
 
+    @Transactional
     public void deleteCompilation(Long compId) {
         if (!compilationRepository.existsById(compId)) {
             throw new NotFoundException("Compilation not found");
@@ -62,7 +64,7 @@ public class CompilationService {
         compilationRepository.deleteById(compId);
     }
 
-
+    @Transactional
     public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest request) {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));

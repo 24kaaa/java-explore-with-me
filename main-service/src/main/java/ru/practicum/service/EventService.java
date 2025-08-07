@@ -47,6 +47,7 @@ public class EventService {
     private final LocationService locationService;
     private final LocationMapper locationMapper;
 
+    @Transactional
     public List<EventFullDto> searchEvents(List<Long> users, List<String> states, List<Long> categories,
                                            LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         validatePaginationParams(from, size);
@@ -120,6 +121,7 @@ public class EventService {
         }
     }
 
+    @Transactional
     private void updateEventFields(Event event, UpdateEventAdminRequest request) {
         if (request.getAnnotation() != null) {
             event.setAnnotation(request.getAnnotation());
@@ -317,6 +319,7 @@ public class EventService {
         return processRequestStatusUpdate(event, requests, requestStatusUpdateRequest.getStatus());
     }
 
+    @Transactional
     private Specification<Event> buildPublicEventsSpecification(String text, List<Long> categories, Boolean paid,
                                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                                 Boolean onlyAvailable) {
@@ -364,6 +367,7 @@ public class EventService {
         return spec;
     }
 
+    @Transactional
     private Pageable buildPageable(String sort, Integer from, Integer size) {
         if ("EVENT_DATE".equals(sort)) {
             return PageRequest.of(from / size, size, Sort.by("eventDate"));
@@ -373,6 +377,7 @@ public class EventService {
         return PageRequest.of(from / size, size);
     }
 
+    @Transactional
     private List<EventShortDto> enrichEventsWithStats(List<Event> events) {
         List<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
 
@@ -426,6 +431,7 @@ public class EventService {
         return stats.isEmpty() ? 0 : stats.get(0).getHits();
     }
 
+    @Transactional
     private void sendHitToStatsService(String uri, String ip) {
         EndpointHit hit = EndpointHit.builder()
                 .app("ewm-main-service")
@@ -448,6 +454,7 @@ public class EventService {
         }
     }
 
+    @Transactional
     private EventRequestStatusUpdateResult processRequestStatusUpdate(Event event,
                                                                       List<ParticipationRequest> requests,
                                                                       String status) {
@@ -516,6 +523,7 @@ public class EventService {
         }
     }
 
+    @Transactional
     private void processAdminStateAction(Event event, String stateAction) {
         if ("PUBLISH_EVENT".equals(stateAction)) {
             if (event.getState() == PUBLISHED) {
@@ -534,6 +542,7 @@ public class EventService {
         }
     }
 
+    @Transactional
     private void processUserStateAction(Event event, String stateAction) {
         if (stateAction.equals("SEND_TO_REVIEW")) {
             event.setState(PENDING);
@@ -542,6 +551,7 @@ public class EventService {
         }
     }
 
+    @Transactional
     private void setDefaultValuesIfNull(Event event) {
         if (event.getPaid() == null) {
             event.setPaid(false);
@@ -574,6 +584,7 @@ public class EventService {
         }
     }
 
+    @Transactional
     private void updateEventFields(Event event, UpdateEventUserRequest updateRequest) {
         if (updateRequest.getAnnotation() != null) {
             event.setAnnotation(updateRequest.getAnnotation());

@@ -1,13 +1,11 @@
 package ru.practicum.mapper;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.NewCategoryDto;
 import ru.practicum.model.Category;
 
 @Component
-@Slf4j
 public class CategoryMapper {
     public Category toCategory(NewCategoryDto newCategoryDto) {
         return Category.builder()
