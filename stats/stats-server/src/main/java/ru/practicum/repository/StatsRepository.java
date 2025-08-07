@@ -33,4 +33,16 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
     List<ViewStats> getUniqueStats(@Param("start") LocalDateTime start,
                                    @Param("end") LocalDateTime end,
                                    @Param("uris") List<String> uris);
+
+    @Query("SELECT new ru.practicum.dto.ViewStats(h.app, h.uri, " +
+            "CASE WHEN :unique = true THEN COUNT(DISTINCT h.ip) ELSE COUNT(h.ip) END) " +
+            "FROM EndpointHit h " +
+            "WHERE h.timestamp BETWEEN :start AND :end " +
+            "AND h.uri = :uri " +
+            "GROUP BY h.app, h.uri")
+    List<ViewStats> getStatsForUri(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("uri") String uri,
+            @Param("unique") boolean unique);
 }
